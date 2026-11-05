@@ -2,6 +2,14 @@
 
 A running log of decisions and problems solved. Useful for interviews: each entry is a "why did you…" answer.
 
+## 2026-11 · Landing page
+
+- **Goal:** exciting and enticing, luxurious yet clean and easy to use. Inspired by artisanal, bohemian-luxury fashion sites: warm ivory, terracotta and ochre, folk-embroidery details, arched shapes, botanical motifs.
+- **Copy is about relief:** "Dinner, decided. Nothing wasted." Benefits focus on less mental effort, fitting your goals, and using what you have. "No password" and "free" sit under the button to remove sign-up hesitation.
+- **Illustrations are code (SVG),** not image files: crisp on any screen, tiny to download, easy to recolor.
+- **Two sign-up forms** (top and bottom of the page) share one state, so the "Check your email" message appears in both.
+- **Ivory landing, cocoa app:** a bright entrance into the cozy app. Contrast checked; terracotta is only used for large text.
+
 ## 2026-11 · AI provider: Gemini free tier, Claude-ready
 
 - **Started on Google Gemini's free tier** to keep running costs at $0 while testing with friends. Trade-offs accepted: daily usage limits, and free-tier data may be used by Google to improve its products.

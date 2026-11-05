@@ -4,7 +4,7 @@ import "./globals.css";
 
 // next/font downloads fonts at build time and serves them from our own site (faster, more private).
 // Each font becomes a CSS variable that globals.css uses.
-const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", variable: "--font-serif" });
+const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], variable: "--font-serif" });
 const sans = Manrope({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
