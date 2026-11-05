@@ -46,36 +46,55 @@ export function Arch() {
   );
 }
 
-/** A folk-embroidery style divider: little flowers and diamonds. */
+/** An embroidered vine: a wavy stitched stem with leaves and berry clusters. */
 export function Band() {
-  const colors = ["#B4623F", "#C99A45", "#8C9471", "#7A2E43", "#869498"];
+  // [x, y, angle, color] for leaves, placed by hand so it feels irregular
+  const leaves: [number, number, number, string][] = [
+    [30, 9, -35, "#8C9471"], [58, 19, 30, "#8C9471"], [96, 8, -20, "#C99A45"], [128, 20, 40, "#8C9471"],
+    [170, 9, -40, "#8C9471"], [204, 19, 25, "#B4623F"], [246, 8, -25, "#8C9471"], [276, 20, 35, "#C99A45"],
+    [318, 9, -30, "#8C9471"], [352, 19, 30, "#8C9471"], [388, 9, -35, "#B4623F"],
+  ];
+  const berries: [number, number, string][] = [[76, 22, "#7A2E43"], [150, 6, "#B4623F"], [226, 22, "#7A2E43"], [300, 6, "#C99A45"], [372, 22, "#7A2E43"]];
   return (
-    <svg className="band" viewBox="0 0 400 28" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <line x1="0" y1="2" x2="400" y2="2" stroke="#D9C9B4" />
-      <line x1="0" y1="26" x2="400" y2="26" stroke="#D9C9B4" />
-      {Array.from({ length: 17 }, (_, i) => {
-        const x = 12 + i * 24, c = colors[i % 5];
-        return i % 2 === 0 ? (
-          <g key={i} fill={c}>
-            {[0, 90, 180, 270].map((r) => <ellipse key={r} cx={x} cy={9} rx="2.6" ry="4.6" transform={`rotate(${r} ${x} 14)`} />)}
-            <circle cx={x} cy="14" r="2.2" fill="#F4ECDF" />
-          </g>
-        ) : (
-          <path key={i} d={`M${x} 8l5 6-5 6-5-6z`} fill="none" stroke={c} strokeWidth="1.6" />
-        );
-      })}
+    <svg className="band" viewBox="0 0 400 28" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      <path d={"M0 14" + Array.from({ length: 8 }, (_, i) => ` q25 ${i % 2 ? 8 : -8} 50 0`).join("")}
+        fill="none" stroke="#8C9471" strokeWidth="1.4" strokeDasharray="4 3" strokeLinecap="round" />
+      {leaves.map(([x, y, r, c], i) => (
+        <path key={i} d={`M${x - 7} ${y}c4-5 10-5 14 0c-4 5-10 5-14 0z`} fill={c} transform={`rotate(${r} ${x} ${y})`} />
+      ))}
+      {berries.map(([x, y, c], i) => (
+        <g key={i} fill={c}><circle cx={x} cy={y} r="2.3" /><circle cx={x + 4} cy={y - 2.5} r="1.8" /><circle cx={x + 4.5} cy={y + 2.5} r="1.6" /></g>
+      ))}
     </svg>
   );
 }
 
-/** Small botanical line icons for the benefit cards. */
-export function Icon({ kind }: { kind: "calm" | "goal" | "jar" }) {
+/** A tiny hand-drawn sprig, used to frame short labels. */
+export function Sprig({ flip = false }: { flip?: boolean }) {
+  return (
+    <svg className="sprig" viewBox="0 0 34 14" aria-hidden="true" style={flip ? { transform: "scaleX(-1)" } : undefined}>
+      <path d="M1 7h31" stroke="#8C9471" strokeWidth="1.2" strokeDasharray="3 2" strokeLinecap="round" />
+      <path d="M8 7c2-4 6-5 9-4c-2 3-6 4-9 4z" fill="#8C9471" />
+      <path d="M17 7c2 4 6 5 9 4c-2-3-6-4-9-4z" fill="#C99A45" />
+      <circle cx="30" cy="7" r="1.8" fill="#B4623F" />
+    </svg>
+  );
+}
+
+/** Small hand-drawn icons in a scalloped badge, for the benefit cards. */
+const scallop = "M" + Array.from({ length: 12 }, (_, i) => {
+  const a = (i / 12) * Math.PI * 2, b = ((i + 1) / 12) * Math.PI * 2, m = (a + b) / 2;
+  const p = (r: number, t: number) => `${(24 + r * Math.cos(t)).toFixed(1)} ${(24 + r * Math.sin(t)).toFixed(1)}`;
+  return `${i === 0 ? p(20, a) : ""} Q${p(25, m)} ${p(20, b)}`;
+}).join(" ") + "Z";
+
+export function Icon({ kind }: { kind: "sun" | "goal" | "jar" }) {
   return (
     <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="24" cy="24" r="22" fill="currentColor" fillOpacity=".12" stroke="none" />
-      {kind === "calm" && <><path d="M14 27c3 4 7 6 10 6s7-2 10-6" /><path d="M17 20h4M27 20h4" /></>}
-      {kind === "goal" && <><path d="M24 36V20" /><path d="M24 26c-6 0-9-4-9-9 6 0 9 4 9 9z" /><path d="M24 22c5 0 8-3 8-8-5 0-8 3-8 8z" /></>}
-      {kind === "jar" && <><rect x="15" y="17" width="18" height="19" rx="4" /><path d="M17 13h14v4H17z" /><path d="M19 26h10" /></>}
+      <path d={scallop} fill="currentColor" fillOpacity=".12" stroke="currentColor" strokeOpacity=".35" strokeWidth="1" />
+      {kind === "sun" && <><circle cx="24" cy="24" r="5.5" />{[0, 45, 90, 135, 180, 225, 270, 315].map((r) => <path key={r} d="M24 14.5v-2.5" transform={`rotate(${r} 24 24)`} />)}</>}
+      {kind === "goal" && <><path d="M24 35V20" /><path d="M24 26c-6 0-9-4-9-9 6 0 9 4 9 9z" /><path d="M24 22c5 0 8-3 8-8-5 0-8 3-8 8z" /></>}
+      {kind === "jar" && <><rect x="16" y="18" width="16" height="17" rx="4" /><path d="M18 14h12v4H18z" /><path d="M20 26c1.5-1.5 6.5-1.5 8 0" /></>}
     </svg>
   );
 }
