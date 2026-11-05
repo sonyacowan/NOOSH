@@ -2,6 +2,14 @@
 
 A running log of decisions and problems solved. Useful for interviews: each entry is a "why did you…" answer.
 
+## 2026-11 · Landing page, round 2: chocolate riad
+
+- **Iterated through boho (ivory, embroidered vine) and two Moroccan takes** (tiled horseshoe arch; riad window / zellige courtyard) before landing on **rich chocolate with brass and gold**, keeping Moroccan details subtle: a pointed arch with double gold line, faint lattice that fades toward the center, a brass lantern glow, and star dividers.
+- **Dropped an early four-petal pattern** because it read too much like a famous fashion monogram. Brand originality matters.
+- **The landing now matches the cocoa app,** so signing in feels continuous.
+- **Worked on a preview branch** (`landing-chocolate`) so the design could be checked at a real URL before going live.
+- **Bug fixed:** a background noise texture showed seams on wide screens; SVG `stitchTiles` makes the tile edges match.
+
 ## 2026-11 · Landing page
 
 - **Goal:** exciting and enticing, luxurious yet clean and easy to use. Inspired by artisanal, bohemian-luxury fashion sites: warm ivory, terracotta and ochre, folk-embroidery details, arched shapes, botanical motifs.

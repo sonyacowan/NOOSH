@@ -3,7 +3,7 @@
 // No passwords to remember or leak.
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Arch, Band, Icon } from "./art";
+import { Arch, Divider, Icon } from "./art";
 import "./landing.css";
 
 type Status = "idle" | "sending" | "sent";
@@ -73,16 +73,16 @@ export default function LoginPage() {
         <p className="sub">NOOSH plans your week of dinners and one simple grocery list, built around your goals and what’s already in your kitchen.</p>
         {form("email-top")}
 
-        <Band />
+        <Divider />
         <h2 className="serif">Take the thinking <em>out of dinner</em></h2>
         <p className="lede">No more 5pm “what’s for dinner?” No more half a bunch of herbs going limp in the fridge.</p>
         <div className="perks">
-          <div className="perk"><Icon kind="calm" /><div><b>Less to think about</b><span>Your dinners and grocery list, ready in about a minute. Just shop and cook.</span></div></div>
-          <div className="perk"><Icon kind="goal" /><div><b>Made around you</b><span>More protein, more plants, quicker meals, foods you avoid. Your week fits your goals.</span></div></div>
+          <div className="perk"><Icon kind="tea" /><div><b>Less to think about</b><span>Your dinners and grocery list, ready in about a minute. Just shop, cook, and pour the tea.</span></div></div>
+          <div className="perk"><Icon kind="sprout" /><div><b>Made around you</b><span>More protein, more plants, quicker meals, foods you avoid. Your week fits your goals.</span></div></div>
           <div className="perk"><Icon kind="jar" /><div><b>Make the most of what you have</b><span>Recipes share ingredients, and leftovers become next week’s first dinners.</span></div></div>
         </div>
 
-        <Band />
+        <Divider />
         <h2 className="serif">Three easy steps</h2>
         <div className="steps">
           <div className="step"><div className="n">i.</div><div><b>Tell us how you like to eat</b><span>Once. We remember.</span></div></div>
@@ -94,7 +94,7 @@ export default function LoginPage() {
           <h2 className="serif">Your week, <em>made easy.</em></h2>
           {form("email-bottom")}
         </div>
-        <div className="foot">NOOSH · made with care for your kitchen</div>
+        <div className="lfoot">NOOSH · made with care for your kitchen</div>
       </div>
     </main>
   );

@@ -1,56 +1,59 @@
-/* Landing / sign-in page: warm ivory, artisanal details.
-   The app itself (after sign-in) keeps the cocoa theme from globals.css. */
-body:has(.landing){background:#F4ECDF}
+/* Landing / sign-in page: rich chocolate with brass and gold, subtle Moroccan details.
+   Same family as the cocoa app people land in after signing in. */
+body:has(.landing){background:#2A201D}
 .landing{
-  --l-bg:#F4ECDF; --l-card:#FBF6EE; --l-soft:#EADFCF; --l-ink:#362825; --l-muted:#6B5C52; --l-line:#E2D5C3;
-  --l-terra:#A9552F; --l-terra-icon:#B4623F;
-  background:var(--l-bg);color:var(--l-ink);min-height:100vh;color-scheme:light;
+  --l-bg:#2A201D; --l-card:#33261F; --l-field:#362825; --l-ink:#F3EADB; --l-muted:#C2B3A3; --l-line:#4A3B36;
+  --l-gold:#D2A75A; --l-goldline:#6B5434; --l-goldline2:#3F3026; --l-accent:#E0A27A; --l-btn:#D9B271; --l-on-btn:#2A201D;
+  color:var(--l-ink);min-height:100vh;color-scheme:dark;
+  background:
+    radial-gradient(70% 35% at 50% 0%, rgba(255,214,150,.10), transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .02' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .9 0 0 0 0 .75 0 0 0 0 .55 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    var(--l-bg);
 }
 .landing .in{max-width:560px;margin:0 auto;padding:0 22px}
 .landing .serif{font-family:var(--font-serif),Georgia,serif;font-weight:400}
-.landing em{font-family:var(--font-serif),Georgia,serif;font-style:italic;color:var(--l-terra)}
+.landing em{font-family:var(--font-serif),Georgia,serif;font-style:italic;color:var(--l-accent)}
 .landing .top{display:flex;justify-content:space-between;align-items:center;padding:22px 0 6px}
-.landing .mark{font-family:var(--font-serif),serif;font-size:1.3rem;letter-spacing:.34em;color:var(--l-ink);text-decoration:none}
+.landing .mark{font-family:var(--font-serif),serif;font-size:1.3rem;letter-spacing:.34em}
 .landing .toplink{font-size:.88rem;color:var(--l-muted);text-decoration:underline;text-underline-offset:3px;background:none;border:0;font-family:inherit;cursor:pointer;padding:6px 0}
-.landing .arch{display:block;width:78%;max-width:300px;margin:18px auto 0}
-.landing .eyebrow{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--l-muted);font-weight:700;text-align:center;margin-top:22px}
+.landing .arch{display:block;width:100%;max-width:330px;margin:8px auto 0}
+.landing .eyebrow{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--l-gold);font-weight:700;text-align:center;margin-top:20px}
 .landing h1{font-size:3.1rem;line-height:1.02;letter-spacing:-.015em;text-align:center;margin:10px 0 0}
 .landing .sub{font-size:1.06rem;line-height:1.6;color:var(--l-muted);text-align:center;margin:16px auto 0;max-width:34ch}
 /* form */
 .landing .form{display:flex;flex-direction:column;gap:10px;margin-top:26px}
-.landing .form input{width:100%;font:inherit;font-size:1rem;color:var(--l-ink);background:var(--l-card);border:1.5px solid var(--l-line);border-radius:999px;padding:15px 20px}
-.landing .form input::placeholder{color:#776759}
-.landing :focus-visible{outline:3px solid var(--l-terra);outline-offset:2px}
-.landing .cta{font:inherit;font-weight:700;font-size:1rem;border:0;border-radius:999px;padding:16px 20px;background:var(--l-ink);color:#F8F1E6;cursor:pointer}
+.landing .form input{width:100%;font:inherit;font-size:1rem;color:var(--l-ink);background:var(--l-field);border:1.5px solid var(--l-line);border-radius:999px;padding:15px 20px}
+.landing .form input::placeholder{color:#A89888}
+.landing :focus-visible{outline:3px solid var(--l-gold);outline-offset:2px}
+.landing .cta{font:inherit;font-weight:700;font-size:1rem;border:0;border-radius:999px;padding:16px 20px;background:var(--l-btn);color:var(--l-on-btn);cursor:pointer}
 .landing .cta:disabled{opacity:.6;cursor:wait}
 .landing .fine{font-size:.82rem;color:var(--l-muted);text-align:center;margin-top:4px}
-.landing .sent{background:var(--l-card);border:1.5px solid var(--l-line);border-radius:24px;padding:20px;text-align:center;margin-top:26px;line-height:1.55}
+.landing .sent{background:var(--l-card);border:1px solid var(--l-goldline);border-radius:22px;padding:20px;text-align:center;margin-top:26px;line-height:1.55}
 .landing .sent b{display:block;font-family:var(--font-serif),serif;font-weight:400;font-size:1.6rem;margin-bottom:4px}
 .landing .sent .again{margin-top:10px}
-.landing .err{background:#F6E1D9;color:#8A3A1E;border-radius:16px;padding:12px 16px;font-size:.92rem;text-align:center}
+.landing .err{background:#4A2B27;color:#F0B4A6;border-radius:16px;padding:12px 16px;font-size:.92rem;text-align:center}
 /* sections */
-.landing .band{display:block;width:100%;height:28px;margin:44px 0 34px}
-.landing h2{font-size:2.1rem;text-align:center;margin:0 0 6px;line-height:1.1}
+.landing .divider{display:block;width:100%;height:24px;margin:44px 0 34px}
+.landing h2{font-family:var(--font-serif),serif;font-weight:400;font-size:2.1rem;text-align:center;margin:0 0 6px;line-height:1.1}
 .landing .lede{text-align:center;color:var(--l-muted);margin:0 auto 24px;max-width:34ch;line-height:1.6}
 .landing .perks{display:grid;gap:12px}
-.landing .perk{background:var(--l-card);border-radius:22px;padding:18px 18px 18px 16px;display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:start}
-.landing .perk svg{width:46px;height:46px;color:var(--l-terra-icon)}
+.landing .perk{background:var(--l-card);border:1px solid var(--l-goldline);border-radius:8px;padding:18px 18px 18px 14px;display:grid;grid-template-columns:46px 1fr;gap:12px;align-items:start;position:relative}
+.landing .perk::before{content:"";position:absolute;inset:4px;border:1px solid var(--l-goldline2);border-radius:5px;pointer-events:none}
+.landing .perk svg{width:42px;height:42px;color:var(--l-gold)}
 .landing .perk b{display:block;font-size:1.02rem;margin-bottom:2px}
 .landing .perk span{color:var(--l-muted);font-size:.95rem;line-height:1.5}
-.landing .steps{display:grid;gap:18px;margin-top:18px}
-.landing .step{display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:baseline}
-.landing .step .n{font-family:var(--font-serif),serif;font-size:1.9rem;color:var(--l-terra);line-height:1}
+.landing .steps{display:grid;gap:18px;margin-top:20px}
+.landing .step{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:baseline}
+.landing .step .n{font-family:var(--font-serif),serif;font-size:1.9rem;color:var(--l-accent);line-height:1}
 .landing .step b{display:block}
 .landing .step span{color:var(--l-muted);font-size:.95rem}
-.landing .close{background:var(--l-soft);border-radius:200px 200px 26px 26px;padding:46px 24px 28px;text-align:center;margin-top:44px}
+.landing .close{margin-top:44px;text-align:center;padding:66px 26px 28px;background:var(--l-card);border-radius:200px 200px 22px 22px;border:1px solid var(--l-goldline)}
 .landing .close h2{font-size:2rem}
-.landing .foot{text-align:center;color:var(--l-muted);font-size:.8rem;padding:28px 0 40px}
-/* wider screens: a bit more room for the hero */
+.landing .lfoot{text-align:center;color:var(--l-muted);font-size:.8rem;padding:28px 0 40px}
 @media (min-width:760px){
   .landing .in{max-width:620px}
   .landing h1{font-size:3.8rem}
-  .landing .arch{max-width:320px}
-  .landing .perks{grid-template-columns:1fr}
+  .landing .arch{max-width:360px}
 }
 @media (prefers-reduced-motion:no-preference){
   .landing .arch,.landing h1,.landing .sub{animation:rise .8s ease both}
