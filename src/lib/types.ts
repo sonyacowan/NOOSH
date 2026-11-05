@@ -10,7 +10,7 @@ export const MealPlanSchema = z.object({
     z.object({
       id: z.string().describe('Short id like "r1"'),
       name: z.string(),
-      minutes: z.number().int(),
+      minutes: z.number().describe("Total minutes, a whole number"),
       why: z.string().describe("One short sentence on what it shares with other dinners"),
       ingredients: z.array(
         z.object({

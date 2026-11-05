@@ -17,7 +17,7 @@
 |---|---|---|
 | App | [Next.js](https://nextjs.org) 15 (App Router, TypeScript) | Pages and server API in one project |
 | Auth + database | [Supabase](https://supabase.com) (Postgres) | Email sign-in and Row Level Security on the free tier |
-| AI | [Claude API](https://docs.claude.com) with structured outputs | The response is guaranteed to match the plan schema |
+| AI | [Google Gemini](https://ai.google.dev) (free tier) or [Claude](https://docs.claude.com) | Structured JSON output, validated against one shared schema |
 | Hosting | [Vercel](https://vercel.com) | Zero-config deploys from GitHub |
 
 ## How it works
@@ -30,7 +30,8 @@ Browser (App.tsx) ──reads/writes own rows──▶ Supabase (RLS enforces pe
 ```
 
 - `src/app/App.tsx`: the three tabs (This week, Leftovers, Preferences)
-- `src/app/api/plan/route.ts`: loads preferences, leftovers, and recent dinners, calls Claude, and saves the plan
+- `src/app/api/plan/route.ts`: loads preferences, leftovers, and recent dinners, asks the AI for a plan, and saves it
+- `src/lib/ai.ts`: talks to Gemini or Claude, whichever key is set
 - `src/lib/types.ts`: the meal-plan schema (Zod), shared by the AI call and the UI
 - `src/lib/prompt.ts`: the planning instructions
 - `supabase/schema.sql`: tables and security policies
@@ -38,7 +39,7 @@ Browser (App.tsx) ──reads/writes own rows──▶ Supabase (RLS enforces pe
 ## Run it locally
 
 1. Create a free [Supabase](https://supabase.com) project. In **SQL Editor**, run `supabase/schema.sql`.
-2. Get an API key from the [Anthropic Console](https://console.anthropic.com).
+2. Get a free Gemini API key from [Google AI Studio](https://aistudio.google.com) (or an Anthropic key from the [Console](https://console.anthropic.com)).
 3. Copy `.env.example` to `.env.local` and fill in the values.
 4. In Supabase, open **Authentication → URL Configuration** and add `http://localhost:3000/auth/callback` to the redirect URLs.
 5. Run:

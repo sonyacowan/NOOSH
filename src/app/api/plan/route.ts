@@ -1,19 +1,16 @@
-// POST /api/plan  -- generates a new weekly plan with Claude and saves it.
+// POST /api/plan  -- generates a new weekly plan with AI and saves it.
 // Body: { "mode": "fresh" }  re-plan the current week from scratch
 //       { "mode": "next" }   start next week, using up the logged leftovers
 //
-// Runs only on the server, so ANTHROPIC_API_KEY never reaches the browser.
-import Anthropic from "@anthropic-ai/sdk";
-import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
+// Runs only on the server, so the AI key never reaches the browser.
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { MealPlanSchema, PreferencesSchema } from "@/lib/types";
+import { PreferencesSchema } from "@/lib/types";
+import { AiError, generateMealPlan } from "@/lib/ai";
 import { SYSTEM_PROMPT, buildUserMessage } from "@/lib/prompt";
 
 export const maxDuration = 120; // seconds; planning usually takes 20-60s
-const DAILY_LIMIT = 8;          // protects your API bill from runaway use
-
-const anthropic = new Anthropic(); // reads ANTHROPIC_API_KEY from the environment
+const DAILY_LIMIT = 8;          // protects your AI quota and bill from runaway use
 
 function fail(status: number, error: string) {
   return NextResponse.json({ error }, { status });
@@ -54,31 +51,9 @@ export async function POST(request: Request) {
 
   let plan;
   try {
-    const response = await anthropic.beta.messages.parse(
-      {
-        model: "claude-opus-5-5",
-        max_tokens: 16000,
-        // Effort trades depth of reasoning for speed and cost. "medium" suits a meal plan.
-        output_config: { effort: "medium", format: betaZodOutputFormat(MealPlanSchema) },
-        // If the model ever declines a request, the API retries on a fallback model.
-        betas: ["server-side-fallback-2026-07-01"],
-        fallbacks: "default",
-        system: SYSTEM_PROMPT,
-        messages: [{ role: "user", content: buildUserMessage(prefs.data, have, recent) }],
-      },
-      { signal: request.signal }, // stop paying if the user presses Stop
-    );
-    if (response.stop_reason === "refusal") return fail(422, "Claude couldn't plan with these settings. Try adjusting your preferences.");
-    if (response.stop_reason === "max_tokens") return fail(502, "The plan came back incomplete. Try again, or plan fewer dinners.");
-    plan = response.parsed_output;
-    if (!plan) return fail(502, "The plan didn't come back in a usable form. Try again.");
+    plan = await generateMealPlan(SYSTEM_PROMPT, buildUserMessage(prefs.data, have, recent), request.signal);
   } catch (err) {
-    if (err instanceof Anthropic.APIUserAbortError) return fail(499, "Stopped.");
-    if (err instanceof Anthropic.RateLimitError) return fail(429, "Too many requests right now. Wait a minute and try again.");
-    if (err instanceof Anthropic.AuthenticationError) {
-      console.error("Anthropic API key is missing or invalid");
-      return fail(500, "The server isn't set up correctly. (API key)");
-    }
+    if (err instanceof AiError) return fail(err.status, err.message);
     console.error("Plan generation failed", err);
     return fail(502, "Planning failed. Try again in a moment.");
   }

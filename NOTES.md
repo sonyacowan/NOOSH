@@ -2,6 +2,13 @@
 
 A running log of decisions and problems solved. Useful for interviews: each entry is a "why did you…" answer.
 
+## 2026-11 · AI provider: Gemini free tier, Claude-ready
+
+- **Started on Google Gemini's free tier** to keep running costs at $0 while testing with friends. Trade-offs accepted: daily usage limits, and free-tier data may be used by Google to improve its products.
+- **Made the AI swappable.** `src/lib/ai.ts` exposes one function, `generateMealPlan()`. It uses Gemini if `GEMINI_API_KEY` is set, otherwise Claude. Switching providers is a settings change, not a code change.
+- **One schema, validated twice.** The same Zod schema is sent to the AI (as JSON Schema) and used to check the answer before saving. AI output is never trusted blindly.
+- **Problem solved:** Zod's "whole number" type produced a ±9-quadrillion range in the JSON Schema, which strict AI schema parsers can reject; simplified the field and stripped schema keywords Gemini doesn't need.
+
 ## 2026-11 · Rename and redesign
 
 - **Name: Barakat → Noosh.** From *noosh-e jan* ("may it nourish your soul", the Persian "bon appétit"). Short, warm, about food. "Barakat" was also used by an Iranian state-linked foundation and a vaccine; "Joon" was considered but is used by many brands.
