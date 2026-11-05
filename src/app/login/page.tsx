@@ -29,7 +29,7 @@ export default function LoginPage() {
       options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
     });
     if (error) {
-      setError(error.message.includes("rate") ? "Too many sign-in emails just now. Please wait a minute and try again." : error.message);
+      setError(error.message.includes("rate") ? "Sign-in emails are paused for a little while. Check your inbox for a link we already sent, or try again later." : error.message);
       setStatus("idle");
     } else {
       setStatus("sent");
