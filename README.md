@@ -1,8 +1,8 @@
-# Barakat
+# Noosh
 
 **Weekly dinners planned around shared ingredients and last week's leftovers, so less food goes to waste.**
 
-*Barakat* (Persian/Arabic: blessing, abundance) comes from the tradition of not wasting food.
+*Noosh* comes from the Persian *noosh-e jan*: "may it nourish your soul", said before a meal.
 
 ## What it does
 

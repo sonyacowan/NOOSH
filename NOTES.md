@@ -2,6 +2,12 @@
 
 A running log of decisions and problems solved. Useful for interviews: each entry is a "why did you…" answer.
 
+## 2026-11 · Rename and redesign
+
+- **Name: Barakat → Noosh.** From *noosh-e jan* ("may it nourish your soul", the Persian "bon appétit"). Short, warm, about food. "Barakat" was also used by an Iranian state-linked foundation and a vaccine; "Joon" was considered but is used by many brands.
+- **Design: "grounded & composed".** Explored two rounds of mockups (light palettes, then rich patterned dark themes) before settling on something cleaner: deep cocoa background, chocolate `#362825` cards, one slate `#869498` accent, cream text. One reading font (Manrope) and a serif (Instrument Serif) only for headings. Lesson: decoration competed with usability; restraint read as more premium.
+- **Accessibility checks:** text/background contrast measured against WCAG AA (4.5:1 for body text).
+
 ## 2026-11 · v1: from Claude artifact to a real web app
 
 **Starting point.** A single HTML file running as a Claude artifact. AI and storage went through the user's Claude account, so only Claude users could use it.

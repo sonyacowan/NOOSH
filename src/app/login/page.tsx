@@ -26,7 +26,7 @@ export default function LoginPage() {
 
   return (
     <div className="wrap narrow">
-      <header className="top"><h1>Barakat</h1></header>
+      <header className="top"><h1>Noosh</h1></header>
       <p className="lede">Weekly dinners planned around what you already have, so less food goes to waste.</p>
       {state === "sent" ? (
         <div className="note">

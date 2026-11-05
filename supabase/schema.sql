@@ -1,4 +1,4 @@
--- Barakat database schema.
+-- Noosh database schema.
 -- Paste this whole file into Supabase: Dashboard -> SQL Editor -> New query -> Run.
 -- Safe to run once on a fresh project.
 

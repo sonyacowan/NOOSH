@@ -98,7 +98,7 @@ export default function App(props: {
     <>
       <div className="wrap">
         <header className="top">
-          <h1>Barakat</h1>
+          <h1>Noosh</h1>
           <span className="weekpill">Week {plan?.week ?? 1}</span>
         </header>
 
@@ -224,7 +224,9 @@ function PlanView({ row, onCheck, onDone, onRedo }: {
               <h3>{r.name}</h3>
               <div className="rmeta">{r.minutes} min{r.why ? ` · ${r.why}` : ""}</div>
             </div>
-            <span className="chev" aria-hidden="true">›</span>
+            <svg className="chev" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M7.5 4.5 13 10l-5.5 5.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </summary>
           <div className="rbody">
             <ul>
@@ -240,7 +242,7 @@ function PlanView({ row, onCheck, onDone, onRedo }: {
       <h2>Grocery list</h2>
       <div className="legend"><span className="overlap"><i /><i /></span> dots show how many dinners use an item</div>
       {plan.grocery.map((sec) => (
-        <div key={sec.section}>
+        <div className="sec" key={sec.section}>
           <div className="section-name">{sec.section}</div>
           {sec.items.map((it) => {
             const key = `${sec.section}|${it.name}`;
@@ -265,12 +267,12 @@ function PlanView({ row, onCheck, onDone, onRedo }: {
       ))}
 
       {plan.already_have.length > 0 && (
-        <>
+        <div className="sec">
           <div className="section-name">Already in your kitchen</div>
           {plan.already_have.map((h) => (
             <div className="item" key={h.name}><span className="name">{h.name}</span><span className="lefttag">use first</span></div>
           ))}
-        </>
+        </div>
       )}
 
       <button className="btn secondary" onClick={onDone}>Week’s done: log leftovers</button>
@@ -310,7 +312,7 @@ function LeftoversView({ plan, kitchen, onChange, saveMsg, busy, onPlanNext }: {
           <h2>From this week</h2>
           <div className="chips">
             {items.map((n) => (
-              <button key={n} type="button" className="chip" aria-pressed={kitchen.leftovers.includes(n)} onClick={() => toggle(n)}>{n}</button>
+              <button key={n} type="button" className="chip pick" aria-pressed={kitchen.leftovers.includes(n)} onClick={() => toggle(n)}>{n}</button>
             ))}
           </div>
         </>
@@ -326,8 +328,8 @@ function LeftoversView({ plan, kitchen, onChange, saveMsg, busy, onPlanNext }: {
       </div>
       <div className="chips">
         {kitchen.extras.map((n) => (
-          <button key={n} type="button" className="chip" aria-pressed="true" aria-label={`Remove ${n}`}
-            onClick={() => onChange({ ...kitchen, extras: kitchen.extras.filter((x) => x !== n) })}>{n} ✕</button>
+          <button key={n} type="button" className="chip extra" aria-label={`Remove ${n}`}
+            onClick={() => onChange({ ...kitchen, extras: kitchen.extras.filter((x) => x !== n) })}>{n} <span aria-hidden="true">✕</span></button>
         ))}
       </div>
       <div className="saved" aria-live="polite">{saveMsg}</div>

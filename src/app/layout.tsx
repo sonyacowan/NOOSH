@@ -1,20 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque } from "next/font/google";
+import { Instrument_Serif, Manrope } from "next/font/google";
 import "./globals.css";
 
-// next/font downloads the font at build time and serves it from our own site (faster, more private).
-const bricolage = Bricolage_Grotesque({ subsets: ["latin"], weight: ["400", "600", "800"] });
+// next/font downloads fonts at build time and serves them from our own site (faster, more private).
+// Each font becomes a CSS variable that globals.css uses.
+const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", variable: "--font-serif" });
+const sans = Manrope({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Barakat",
+  title: "Noosh",
   description: "Weekly dinners planned around shared ingredients and last week's leftovers.",
 };
-export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#2A201D" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={bricolage.className}>{children}</body>
+    <html lang="en" className={`${serif.variable} ${sans.variable}`}>
+      <body>{children}</body>
     </html>
   );
 }
