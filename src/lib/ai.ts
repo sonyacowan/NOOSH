@@ -34,32 +34,56 @@ async function withGemini(system: string, user: string, signal: AbortSignal): Pr
       key === "$schema" || key === "additionalProperties" ? undefined : value),
   );
 
-  let text: string | undefined;
-  try {
-    const response = await ai.models.generateContent({
-      model: process.env.GEMINI_MODEL || "gemini-flash-latest",
-      contents: user,
-      config: {
-        systemInstruction: system,
-        responseMimeType: "application/json",
-        responseJsonSchema: jsonSchema,
-        abortSignal: signal,
-      },
-    });
-    text = response.text;
-  } catch (err) {
-    if (signal.aborted) throw new AiError(499, "Stopped.");
-    if (err instanceof ApiError) {
-      if (err.status === 429) throw new AiError(429, "The free AI quota is used up for now. Try again later.");
-      if (err.status === 400 || err.status === 401 || err.status === 403) {
-        console.error("Gemini rejected the request", err.status, err.message);
+  // Free-tier models are sometimes overloaded (HTTP 503) or out of quota (429).
+  // So: try the main model twice, then a lighter model twice, with short pauses.
+  // GEMINI_MODEL can override the list, e.g. "gemini-flash-latest,gemini-flash-lite-latest".
+  const models = (process.env.GEMINI_MODEL || "gemini-flash-latest,gemini-flash-lite-latest")
+    .split(",").map((m) => m.trim()).filter(Boolean);
+  const attempts = models.flatMap((model) => [model, model]);
+  let lastStatus = 0;
+
+  for (let i = 0; i < attempts.length; i++) {
+    const model = attempts[i];
+    try {
+      const response = await ai.models.generateContent({
+        model,
+        contents: user,
+        config: {
+          systemInstruction: system,
+          responseMimeType: "application/json",
+          responseJsonSchema: jsonSchema,
+          abortSignal: signal,
+        },
+      });
+      return validate(response.text);
+    } catch (err) {
+      if (signal.aborted) throw new AiError(499, "Stopped.");
+      if (err instanceof AiError) throw err; // the answer came back but was unusable
+      const status = err instanceof ApiError ? err.status : 0;
+      lastStatus = status;
+      if (status === 400 || status === 401 || status === 403) {
+        console.error("Gemini rejected the request", model, status, (err as Error).message);
         throw new AiError(500, "The server isn't set up correctly. (AI key)");
       }
+      console.warn(`Gemini attempt ${i + 1}/${attempts.length} failed`, model, status || (err as Error).message);
+      const busy = status === 503 || status === 500 || status === 429;
+      // A model that doesn't exist (404): skip its second try and move on.
+      if (status === 404 && attempts[i + 1] === model) i++;
+      else if (!busy && status !== 404) break; // unknown problem: don't keep hammering
+      if (i + 1 < attempts.length) await pause(1500 * (i + 1), signal);
     }
-    console.error("Gemini call failed", err);
-    throw new AiError(502, "Planning failed. Try again in a moment.");
   }
-  return validate(text);
+
+  if (lastStatus === 429) throw new AiError(429, "Today's free AI quota is used up. Try again later.");
+  if (lastStatus === 503 || lastStatus === 500) throw new AiError(503, "Gemini is busy right now. Try again in a minute.");
+  throw new AiError(502, "Planning failed. Try again in a moment.");
+}
+
+function pause(ms: number, signal: AbortSignal) {
+  return new Promise<void>((resolve) => {
+    const t = setTimeout(resolve, ms);
+    signal.addEventListener("abort", () => { clearTimeout(t); resolve(); }, { once: true });
+  });
 }
 
 /* ---------- Anthropic Claude ---------- */
