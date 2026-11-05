@@ -98,7 +98,7 @@ export default function App(props: {
     <>
       <div className="wrap">
         <header className="top">
-          <h1>Noosh</h1>
+          <h1 className="mark">NOOSH</h1>
           <span className="weekpill">Week {plan?.week ?? 1}</span>
         </header>
 
@@ -107,18 +107,24 @@ export default function App(props: {
         {view === "plan" && (
           <section>
             {busy && (
-              <div className="status">
-                <p><span className="pulse" />{busy === "next" ? "Planning around your leftovers…" : "Planning your week…"}</p>
-                <p className="muted" style={{ margin: 0 }}>This usually takes under a minute.</p>
-                <button className="btn secondary" onClick={() => abortRef.current?.abort()}>Stop</button>
+              <div className="status" role="status">
+                <Lantern />
+                <h3>{busy === "next" ? "Planning around your leftovers…" : "Planning your week…"}</h3>
+                <p className="muted">Choosing dinners that share ingredients. This can take up to a minute.</p>
+                <button className="small-link" onClick={() => abortRef.current?.abort()}>Cancel</button>
               </div>
             )}
             {error && <div className="error" role="alert">{error}</div>}
             {!busy && !plan && (
               <div className="empty">
-                <h3>No plan yet</h3>
-                <p>I’ll pick recipes that share ingredients so less goes to waste.</p>
+                <h2>Ready for <em>this week?</em></h2>
+                <p>I’ll pick dinners that share ingredients, so less goes to waste.</p>
                 <button className="btn" onClick={() => (prefs ? generate("fresh") : go("prefs"))}>Plan my week</button>
+                {prefs && (
+                  <p className="saved-prefs">
+                    Using your saved preferences · <button className="small-link inline" onClick={() => go("prefs")}>Edit</button>
+                  </p>
+                )}
               </div>
             )}
             {!busy && plan && (
@@ -156,6 +162,7 @@ function PrefsView({ initial, onSave, busy }: { initial: Preferences; onSave: (p
 
   return (
     <section>
+      <h2 className="page-title">Your <em>preferences</em></h2>
       <p className="muted">Tell me how you eat. These are saved, so you only set them once.</p>
       <label className="field" htmlFor="diet">Diet</label>
       <select id="diet" value={p.diet} onChange={(e) => set("diet", e.target.value)}>
@@ -214,9 +221,14 @@ function PlanView({ row, onCheck, onDone, onRedo }: {
 
   return (
     <div>
-      {plan.overview && <div className="note">{plan.overview}</div>}
+      {plan.overview && (
+        <div className="overview">
+          <div className="eyebrow">This week’s thread</div>
+          <p>{plan.overview}</p>
+        </div>
+      )}
 
-      <h2>Dinners</h2>
+      <h2>This week’s <em>dinners</em></h2>
       {plan.recipes.map((r) => (
         <details className="recipe" key={r.id}>
           <summary>
@@ -239,7 +251,7 @@ function PlanView({ row, onCheck, onDone, onRedo }: {
         </details>
       ))}
 
-      <h2>Grocery list</h2>
+      <h2>Grocery <em>list</em></h2>
       <div className="legend"><span className="overlap"><i /><i /></span> dots show how many dinners use an item</div>
       {plan.grocery.map((sec) => (
         <div className="sec" key={sec.section}>
@@ -306,6 +318,7 @@ function LeftoversView({ plan, kitchen, onChange, saveMsg, busy, onPlanNext }: {
 
   return (
     <section>
+      <h2 className="page-title">What’s <em>left?</em></h2>
       <p className="muted">Tap anything you still have. Next week’s plan will use these first and leave them off the grocery list.</p>
       {items.length ? (
         <>
@@ -335,5 +348,23 @@ function LeftoversView({ plan, kitchen, onChange, saveMsg, busy, onPlanNext }: {
       <div className="saved" aria-live="polite">{saveMsg}</div>
       <button className="btn" disabled={busy} onClick={onPlanNext}>Plan next week with these</button>
     </section>
+  );
+}
+
+/* ---------- small artwork ---------- */
+/** A brass lantern that glows while a plan is being made. */
+function Lantern() {
+  return (
+    <svg className="lantern" viewBox="-30 -34 60 76" aria-hidden="true">
+      <defs>
+        <radialGradient id="lanternGlow"><stop offset="0" stopColor="#FFE3A6" stopOpacity=".6" /><stop offset="1" stopColor="#FFE3A6" stopOpacity="0" /></radialGradient>
+      </defs>
+      <circle className="glow" cy="8" r="30" fill="url(#lanternGlow)" />
+      <line x1="0" y1="-34" x2="0" y2="-18" stroke="#9C7430" strokeWidth="1.2" />
+      <path d="M-5-18h10l3 5h-16z" fill="#9C7430" />
+      <path d="M-9-13h18c3 9 3 17 0 24h-18c-3-7-3-15 0-24z" fill="#C99A45" />
+      <g fill="#FFF0C8"><circle cy="-7" r="1.5" /><circle cx="-4" cy="-1" r="1.2" /><circle cx="4" cy="-1" r="1.2" /><circle cy="5" r="1.3" /></g>
+      <path d="M-6 11h12l-4 5h-4z" fill="#9C7430" />
+    </svg>
   );
 }

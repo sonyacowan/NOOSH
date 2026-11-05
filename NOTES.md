@@ -2,6 +2,11 @@
 
 A running log of decisions and problems solved. Useful for interviews: each entry is a "why did you…" answer.
 
+## 2026-11 · App redesign to match the landing page
+
+- **One visual language everywhere:** chocolate, brass buttons, gold hairlines, terracotta italic accents, the spaced NOOSH wordmark, and arch shapes (empty state, planning state, the week's summary, a tiny arch under the current tab).
+- **UX fixes from real use:** returning users skip straight to "This week", which felt like the app had forgotten their goals; added "Using your saved preferences · Edit". A tester stopped a plan mid-way, likely because the big "Stop" button looked like the next step; it is now a small "Cancel" link, and the waiting message says it can take up to a minute.
+
 ## 2026-11 · Landing page, round 2: chocolate riad
 
 - **Iterated through boho (ivory, embroidered vine) and two Moroccan takes** (tiled horseshoe arch; riad window / zellige courtyard) before landing on **rich chocolate with brass and gold**, keeping Moroccan details subtle: a pointed arch with double gold line, faint lattice that fades toward the center, a brass lantern glow, and star dividers.
