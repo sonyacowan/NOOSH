@@ -69,29 +69,29 @@ export default function LoginPage() {
 
         <Arch />
         <div className="eyebrow">Noosh-e jan · may it nourish you</div>
-        <h1 className="serif">Dinner, decided.<br /><em>Nothing wasted.</em></h1>
-        <p className="sub">NOOSH plans your week of dinners and one simple grocery list, built around your goals and what’s already in your kitchen.</p>
+        <h1 className="serif">Your week, decided.<br /><em>Nothing wasted.</em></h1>
+        <p className="sub">NOOSH plans your week of meals, breakfast to dinner, with one grocery list for a single shop. Built around your goals and what’s already in your kitchen.</p>
         {form("email-top")}
 
         <Divider />
-        <h2 className="serif">Take the thinking <em>out of dinner</em></h2>
-        <p className="lede">No more 5pm “what’s for dinner?” No more half a bunch of herbs going limp in the fridge.</p>
+        <h2 className="serif">Take the thinking <em>out of meals</em></h2>
+        <p className="lede">No more 5pm “what’s for dinner?” No more midweek grocery runs. No more half a bunch of herbs going limp in the fridge.</p>
         <div className="perks">
-          <div className="perk"><Icon kind="tea" /><div><b>Less to think about</b><span>Your dinners and grocery list, ready in about a minute. Just shop, cook, and pour the tea.</span></div></div>
-          <div className="perk"><Icon kind="sprout" /><div><b>Made around you</b><span>More protein, more plants, quicker meals, foods you avoid. Your week fits your goals.</span></div></div>
-          <div className="perk"><Icon kind="jar" /><div><b>Make the most of what you have</b><span>Recipes share ingredients, and leftovers become next week’s first dinners.</span></div></div>
+          <div className="perk"><Icon kind="tea" /><div><b>One shop a week</b><span>Breakfast, lunch, dinner and snacks, with every ingredient on one list sorted by aisle. Shop once, then just cook.</span></div></div>
+          <div className="perk"><Icon kind="sprout" /><div><b>Made around you</b><span>Choose which meals to plan. More protein, more plants, quicker cooking, foods you avoid. Your week fits your life.</span></div></div>
+          <div className="perk"><Icon kind="jar" /><div><b>Make the most of what you have</b><span>Meals share ingredients, tonight’s dinner can be tomorrow’s lunch, and leftovers start next week’s plan.</span></div></div>
         </div>
 
         <Divider />
         <h2 className="serif">Three easy steps</h2>
         <div className="steps">
           <div className="step"><div className="n">i.</div><div><b>Tell us how you like to eat</b><span>Once. We remember.</span></div></div>
-          <div className="step"><div className="n">ii.</div><div><b>Get your week</b><span>Dinners, recipes, and one list sorted by aisle.</span></div></div>
+          <div className="step"><div className="n">ii.</div><div><b>Get your week</b><span>Meals, recipes, and one grocery list for a single shop.</span></div></div>
           <div className="step"><div className="n">iii.</div><div><b>Tap what’s left</b><span>Next week’s plan starts there.</span></div></div>
         </div>
 
         <div className="close">
-          <h2 className="serif">Your week, <em>made easy.</em></h2>
+          <h2 className="serif">Shop once. <em>Eat well all week.</em></h2>
           {form("email-bottom")}
         </div>
         <div className="lfoot">NOOSH · made with care for your kitchen</div>

@@ -4,11 +4,16 @@
 // 3. Turned into TypeScript types, so the editor catches typos in the UI.
 import { z } from "zod";
 
+/** The kinds of meals NOOSH can plan. */
+export const MEALS = ["breakfast", "lunch", "dinner", "snack"] as const;
+export type Meal = (typeof MEALS)[number];
+
 export const MealPlanSchema = z.object({
   overview: z.string().describe("One or two friendly sentences on how the week's ingredients connect"),
   recipes: z.array(
     z.object({
       id: z.string().describe('Short id like "r1"'),
+      meal: z.enum(MEALS).describe("Which meal this recipe is for"),
       name: z.string(),
       minutes: z.number().describe("Total minutes, a whole number"),
       why: z.string().describe("One short sentence on what it shares with other dinners"),
@@ -49,14 +54,16 @@ export const PreferencesSchema = z.object({
   goals: z.string().max(300),
   avoid: z.string().max(300),
   dinners: z.number().int().min(3).max(5),
+  // Older accounts saved before this field existed count as dinner-only.
+  meals: z.array(z.enum(MEALS)).min(1).default(["dinner"]),
   servings: z.number().int().min(1).max(8),
   max_minutes: z.number().int().min(10).max(120),
   notes: z.string().max(600),
 });
-export type Preferences = z.infer<typeof PreferencesSchema>;
+export type Preferences = z.output<typeof PreferencesSchema>;
 
 export const DEFAULT_PREFS: Preferences = {
-  diet: "No restrictions", goals: "", avoid: "", dinners: 4, servings: 2, max_minutes: 45, notes: "",
+  diet: "No restrictions", goals: "", avoid: "", dinners: 4, meals: ["breakfast", "lunch", "dinner"], servings: 2, max_minutes: 45, notes: "",
 };
 
 export type PlanRow = {

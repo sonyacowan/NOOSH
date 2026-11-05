@@ -2,7 +2,7 @@
 // their data before sending the page, so there's no "loading…" flash.
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import type { PlanRow, Preferences } from "@/lib/types";
+import { PreferencesSchema, type PlanRow } from "@/lib/types";
 import App from "./App";
 
 export default async function Home() {
@@ -11,7 +11,7 @@ export default async function Home() {
   if (!user) redirect("/login");
 
   const [prefs, kitchen, plan] = await Promise.all([
-    supabase.from("preferences").select("diet, goals, avoid, dinners, servings, max_minutes, notes").maybeSingle(),
+    supabase.from("preferences").select("diet, goals, avoid, dinners, meals, servings, max_minutes, notes").maybeSingle(),
     supabase.from("kitchen").select("leftovers, extras").maybeSingle(),
     supabase.from("plans").select("*").order("created_at", { ascending: false }).limit(1).maybeSingle(),
   ]);
@@ -20,7 +20,7 @@ export default async function Home() {
     <App
       userId={user.id}
       email={user.email ?? ""}
-      initialPrefs={(prefs.data as Preferences) ?? null}
+      initialPrefs={prefs.data ? PreferencesSchema.parse(prefs.data) : null}
       initialKitchen={kitchen.data ?? { leftovers: [], extras: [] }}
       initialPlan={(plan.data as PlanRow) ?? null}
     />

@@ -9,7 +9,7 @@ const sans = Manrope({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "Noosh",
-  description: "Weekly dinners planned around shared ingredients and last week's leftovers.",
+  description: "Your week of meals and one grocery list, planned around your goals and what's already in your kitchen.",
 };
 export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#2A201D" };
 

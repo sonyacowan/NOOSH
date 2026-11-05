@@ -9,6 +9,7 @@ create table public.preferences (
   goals       text not null default '',
   avoid       text not null default '',
   dinners     int  not null default 4  check (dinners between 3 and 5),
+  meals       text[] not null default '{breakfast,lunch,dinner}',  -- which meals to plan
   servings    int  not null default 2  check (servings between 1 and 8),
   max_minutes int  not null default 45 check (max_minutes between 10 and 120),
   notes       text not null default '',

@@ -2,6 +2,13 @@
 
 A running log of decisions and problems solved. Useful for interviews: each entry is a "why did you…" answer.
 
+## 2026-11 · From "dinner planner" to "one shop a week"
+
+- **Product shift:** the real promise is not thinking about groceries more than once a week, so NOOSH now plans any mix of breakfast, lunch, dinner and snacks, all on one grocery list.
+- **How:** each recipe carries a `meal` field in the AI schema; preferences store the chosen `meals`; the AI plans a few rotating breakfasts and lunches (lunches often reuse dinner leftovers) and scales shopping amounts for the whole week.
+- **Backwards compatible:** a database migration adds `meals` with a dinner-only default for existing accounts, and older saved plans without a `meal` field display as dinners.
+- **Copy kept honest:** "Your week, decided." only shipped together with the feature that makes it true.
+
 ## 2026-11 · App redesign to match the landing page
 
 - **One visual language everywhere:** chocolate, brass buttons, gold hairlines, terracotta italic accents, the spaced NOOSH wordmark, and arch shapes (empty state, planning state, the week's summary, a tiny arch under the current tab).

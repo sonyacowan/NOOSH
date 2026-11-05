@@ -4,10 +4,15 @@
 // It reads and writes the database directly; Row Level Security keeps it to this user's rows.
 import { useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { DEFAULT_PREFS, type MealPlan, type PlanRow, type Preferences } from "@/lib/types";
+import { DEFAULT_PREFS, MEALS, type Meal, type MealPlan, type PlanRow, type Preferences } from "@/lib/types";
 
 type View = "plan" | "left" | "prefs";
 type Kitchen = { leftovers: string[]; extras: string[] };
+
+const MEAL_LABEL: Record<Meal, string> = { breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner", snack: "Snacks" };
+const MEAL_TITLE: Record<Meal, [string, string]> = {
+  breakfast: ["Breakfast,", "on rotation"], lunch: ["Lunch,", "made easy"], dinner: ["This week’s", "dinners"], snack: ["Something", "to snack on"],
+};
 
 const DIETS = ["No restrictions", "Vegetarian", "Vegan", "Pescatarian", "Mediterranean", "Low carb", "Gluten-free", "Dairy-free"];
 
@@ -118,7 +123,7 @@ export default function App(props: {
             {!busy && !plan && (
               <div className="empty">
                 <h2>Ready for <em>this week?</em></h2>
-                <p>I’ll pick dinners that share ingredients, so less goes to waste.</p>
+                <p>I’ll plan your meals around shared ingredients, so you shop once and less goes to waste.</p>
                 <button className="btn" onClick={() => (prefs ? generate("fresh") : go("prefs"))}>Plan my week</button>
                 {prefs && (
                   <p className="saved-prefs">
@@ -177,7 +182,21 @@ function PrefsView({ initial, onSave, busy }: { initial: Preferences; onSave: (p
       <div className="hint">Allergies, dislikes, or things you don’t eat</div>
       <input id="avoid" type="text" maxLength={300} value={p.avoid} onChange={(e) => set("avoid", e.target.value)} placeholder="Cilantro, seed oils" />
 
-      <span className="field">Dinners per week</span>
+      <span className="field">Plan meals for</span>
+      <div className="hint">Everything goes on one grocery list, so you shop once a week.</div>
+      <div className="seg" role="group" aria-label="Meals to plan">
+        {MEALS.map((m) => (
+          <button key={m} type="button" aria-pressed={p.meals.includes(m)}
+            onClick={() => {
+              const next = p.meals.includes(m) ? p.meals.filter((x) => x !== m) : [...p.meals, m];
+              if (next.length) set("meals", MEALS.filter((x) => next.includes(x)));
+            }}>
+            {MEAL_LABEL[m]}
+          </button>
+        ))}
+      </div>
+
+      <span className="field">Cooked dinners per week</span>
       <div className="seg" role="group" aria-label="Dinners per week">
         {[3, 4, 5].map((n) => (
           <button key={n} type="button" aria-pressed={p.dinners === n} onClick={() => set("dinners", n)}>{n}</button>
@@ -186,7 +205,7 @@ function PrefsView({ initial, onSave, busy }: { initial: Preferences; onSave: (p
 
       <div className="row">
         <div>
-          <label className="field" htmlFor="servings">Servings per meal</label>
+          <label className="field" htmlFor="servings">People to feed</label>
           <select id="servings" value={p.servings} onChange={(e) => set("servings", +e.target.value)}>
             {[1, 2, 3, 4, 6].map((n) => <option key={n} value={n}>{n}</option>)}
           </select>
@@ -228,8 +247,13 @@ function PlanView({ row, onCheck, onDone, onRedo }: {
         </div>
       )}
 
-      <h2>This week’s <em>dinners</em></h2>
-      {plan.recipes.map((r) => (
+      {MEALS.map((meal) => {
+        const list = plan.recipes.filter((r) => (r.meal ?? "dinner") === meal);
+        if (!list.length) return null;
+        return (
+          <div key={meal}>
+            <h2>{MEAL_TITLE[meal][0]} <em>{MEAL_TITLE[meal][1]}</em></h2>
+            {list.map((r) => (
         <details className="recipe" key={r.id}>
           <summary>
             <div>
@@ -249,7 +273,10 @@ function PlanView({ row, onCheck, onDone, onRedo }: {
             <ol>{r.steps.map((s, k) => <li key={k}>{s}</li>)}</ol>
           </div>
         </details>
-      ))}
+            ))}
+          </div>
+        );
+      })}
 
       <h2>Grocery <em>list</em></h2>
       <div className="legend"><span className="overlap"><i /><i /></span> dots show how many dinners use an item</div>

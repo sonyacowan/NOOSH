@@ -1,13 +1,13 @@
 # Noosh
 
-**Weekly dinners planned around shared ingredients and last week's leftovers, so less food goes to waste.**
+**Your week of meals and one grocery list for a single shop, planned around your goals and what's already in your kitchen.**
 
 *Noosh* comes from the Persian *noosh-e jan*: "may it nourish your soul", said before a meal.
 
 ## What it does
 
-1. **Preferences:** set your diet, health goals, ingredients to avoid, dinners per week, servings, and max cook time once.
-2. **Weekly plan:** Claude picks recipes that deliberately share perishable ingredients (herbs, greens, half-used vegetables), then builds one grocery list grouped by store section. Dots show how many dinners use each item.
+1. **Preferences:** choose which meals to plan (breakfast, lunch, dinner, snacks) and set your diet, health goals, ingredients to avoid, servings, and cook time once.
+2. **Weekly plan:** the AI picks recipes that deliberately share perishable ingredients (herbs, greens, half-used vegetables), turns dinner leftovers into lunches, and builds one grocery list grouped by store section, so you shop once. Dots show how many recipes use each item.
 3. **Leftovers:** at the end of the week, tap what's left and add anything else in your fridge.
 4. **Next week:** the new plan uses leftovers first, keeps them off the grocery list, and avoids repeating recent dinners.
 
