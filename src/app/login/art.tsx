@@ -51,13 +51,10 @@ export function Arch() {
   return (
     <svg className="arch" viewBox="0 -14 340 444" aria-hidden="true">
       <defs>
-        <pattern id="lattice" width="28" height="28" patternUnits="userSpaceOnUse">
-          <g fill="none" stroke={GOLD} strokeWidth=".8">
-            <g transform="translate(14 14)">
-              <rect x="-7" y="-7" width="14" height="14" /><rect x="-7" y="-7" width="14" height="14" transform="rotate(45)" />
-            </g>
-            <path d="M0 0L4 4M28 0L24 4M0 28L4 24M28 28L24 24M14 0V4M14 28V24M0 14H4M28 14H24" />
-          </g>
+        {/* a diamond trellis, like a carved wooden window screen */}
+        <pattern id="lattice" width="20" height="28" patternUnits="userSpaceOnUse">
+          <path d="M0 0L20 28M20 0L0 28" fill="none" stroke={GOLD} strokeWidth=".8" />
+          <g fill={GOLD}><circle cx="10" cy="14" r="1.4" /><circle cx="0" cy="0" r="1.4" /><circle cx="20" cy="0" r="1.4" /><circle cx="0" cy="28" r="1.4" /><circle cx="20" cy="28" r="1.4" /></g>
         </pattern>
         {/* the lattice fades out toward the middle */}
         <radialGradient id="latticeFade" cx=".5" cy=".45" r=".6"><stop offset=".55" stopColor="#000" /><stop offset="1" stopColor="#fff" /></radialGradient>
@@ -77,25 +74,14 @@ export function Arch() {
       <g transform="translate(170 -4)">
         <path d="M-5 8h10l3 5h-16z" fill="#9C7430" />
         <path d="M-9 13h18c3 9 3 17 0 24h-18c-3-7-3-15 0-24z" fill={GOLD} />
-        <g fill="#FFF0C8"><path d="M0 18l1.6 3 3 .8-3 .8-1.6 3-1.6-3-3-.8 3-.8z" /><circle cy="31" r="1.3" /></g>
+        <g fill="#FFF0C8"><circle cy="19" r="1.5" /><circle cx="-4" cy="25" r="1.2" /><circle cx="4" cy="25" r="1.2" /><circle cy="31" r="1.3" /></g>
         <path d="M-6 37h12l-4 5h-4z" fill="#9C7430" />
       </g>
     </svg>
   );
 }
 
-/** An eight-point star: two overlapping squares, a classic Moroccan geometric motif. */
-function Star({ size = 6, hole = true }: { size?: number; hole?: boolean }) {
-  return (
-    <g>
-      <rect x={-size} y={-size} width={size * 2} height={size * 2} fill={GOLD} />
-      <rect x={-size} y={-size} width={size * 2} height={size * 2} fill={GOLD} transform="rotate(45)" />
-      {hole && <circle r={size * 0.38} fill="#2A201D" />}
-    </g>
-  );
-}
-
-/** A thin gold divider with a star in the middle. */
+/** A thin gold divider with a tiny pointed arch in the middle. */
 export function Divider() {
   return (
     <svg className="divider" viewBox="0 0 400 24" aria-hidden="true">
@@ -103,18 +89,16 @@ export function Divider() {
       <line x1="220" y1="12" x2="360" y2="12" stroke={GOLD} />
       <circle cx="190" cy="12" r="1.6" fill={GOLD} />
       <circle cx="210" cy="12" r="1.6" fill={GOLD} />
-      <g transform="translate(200 12)"><Star /></g>
+      <path d="M193 20v-6c-1-4 3-8 7-11 4 3 8 7 7 11v6" fill="none" stroke={GOLD} strokeWidth="1.3" strokeLinejoin="round" />
     </svg>
   );
 }
 
-/** Line icons framed by an outlined eight-point star, for the benefit cards. */
+/** Line icons set in a small pointed-arch alcove, for the benefit cards. */
 export function Icon({ kind }: { kind: "tea" | "sprout" | "jar" }) {
   return (
-    <svg viewBox="-20 -20 40 40" aria-hidden="true">
-      <g fill="none" stroke="currentColor" strokeWidth="1.2" opacity=".8">
-        <rect x="-14" y="-14" width="28" height="28" /><rect x="-14" y="-14" width="28" height="28" transform="rotate(45)" />
-      </g>
+    <svg viewBox="-20 -22 40 44" aria-hidden="true">
+      <path d="M-14 20V-2C-15-10-7-17 0-21C7-17 15-10 14-2V20Z" fill="currentColor" fillOpacity=".08" stroke="currentColor" strokeWidth="1.2" strokeOpacity=".8" strokeLinejoin="round" />
       <g fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
         {kind === "tea" && <path d="M-6 4h12M-4 4c0-5 1.5-7 4-7s4 2 4 7M7 1c2.5 0 3.5 1 3.5 2s-1 2-3.5 2M-1-5c0-1.5 1-1.5 1-3" />}
         {kind === "sprout" && <path d="M0 8V-2M0 2c-4 0-6-3-6-6 4 0 6 3 6 6zM0-1c3 0 5-2 5-5-3 0-5 2-5 5z" />}
