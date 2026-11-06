@@ -10,9 +10,6 @@ type View = "plan" | "left" | "prefs";
 type Kitchen = { leftovers: string[]; extras: string[] };
 
 const MEAL_LABEL: Record<Meal, string> = { breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner", snack: "Snacks" };
-const MEAL_TITLE: Record<Meal, [string, string]> = {
-  breakfast: ["Breakfast,", "on rotation"], lunch: ["Lunch,", "made easy"], dinner: ["This week’s", "dinners"], snack: ["Something", "to snack on"],
-};
 
 const DIETS = ["No restrictions", "Vegetarian", "Vegan", "Pescatarian", "Mediterranean", "Low carb", "Gluten-free", "Dairy-free"];
 
@@ -39,7 +36,7 @@ export default function App(props: {
   function flash(msg: string) {
     setSaveMsg(msg);
     clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => setSaveMsg(""), 1500);
+    saveTimer.current = setTimeout(() => setSaveMsg(""), msg.length > 12 ? 3500 : 1500);
   }
 
   /* ---------- AI planning ---------- */
@@ -69,11 +66,13 @@ export default function App(props: {
   }
 
   /* ---------- saving ---------- */
-  async function savePrefs(p: Preferences) {
+  /** Save preferences. With replan, also make a fresh plan for this week right away. */
+  async function savePrefs(p: Preferences, replan: boolean) {
     const { error } = await supabase.from("preferences").upsert({ user_id: props.userId, ...p, updated_at: new Date().toISOString() });
     if (error) { setError("Couldn't save your preferences. Try again."); go("plan"); return; }
     setPrefs(p);
-    generate("fresh");
+    if (replan || !plan) generate("fresh");
+    else { flash("Saved. Your next plan will use these."); go("plan"); }
   }
 
   async function toggleChecked(key: string, on: boolean) {
@@ -107,7 +106,7 @@ export default function App(props: {
           <span className="weekpill">Week {plan?.week ?? 1}</span>
         </header>
 
-        {view === "prefs" && <PrefsView initial={prefs ?? DEFAULT_PREFS} onSave={savePrefs} busy={!!busy} />}
+        {view === "prefs" && <PrefsView initial={prefs ?? DEFAULT_PREFS} onSave={savePrefs} busy={!!busy} hasPlan={!!plan} />}
 
         {view === "plan" && (
           <section>
@@ -120,6 +119,7 @@ export default function App(props: {
               </div>
             )}
             {error && <div className="error" role="alert">{error}</div>}
+            {saveMsg && !busy && <div className="toast" role="status">{saveMsg}</div>}
             {!busy && !plan && (
               <div className="empty">
                 <h2>Ready for <em>this week?</em></h2>
@@ -153,7 +153,7 @@ export default function App(props: {
 
       <nav className="tabs" aria-label="Sections">
         {([["plan", "This week"], ["left", "Leftovers"], ["prefs", "Preferences"]] as const).map(([v, label]) => (
-          <button key={v} onClick={() => go(v)} aria-current={view === v ? "page" : undefined}>{label}</button>
+          <button key={v} onClick={() => go(v)} aria-current={view === v ? "page" : undefined}><TabIcon view={v} />{label}</button>
         ))}
       </nav>
     </>
@@ -161,7 +161,11 @@ export default function App(props: {
 }
 
 /* ---------- Preferences tab ---------- */
-function PrefsView({ initial, onSave, busy }: { initial: Preferences; onSave: (p: Preferences) => void; busy: boolean }) {
+const clean = (p: Preferences): Preferences => ({ ...p, goals: p.goals.trim(), avoid: p.avoid.trim(), notes: p.notes.trim() });
+
+function PrefsView({ initial, onSave, busy, hasPlan }: {
+  initial: Preferences; onSave: (p: Preferences, replan: boolean) => void; busy: boolean; hasPlan: boolean;
+}) {
   const [p, setP] = useState(initial);
   const set = <K extends keyof Preferences>(k: K, v: Preferences[K]) => setP({ ...p, [k]: v });
 
@@ -223,10 +227,15 @@ function PrefsView({ initial, onSave, busy }: { initial: Preferences; onSave: (p
       <div className="hint">Cuisines you love, equipment you have, budget</div>
       <textarea id="notes" maxLength={600} value={p.notes} onChange={(e) => set("notes", e.target.value)} placeholder="Love Thai and Mexican food. I have an air fryer." />
 
-      <button className="btn" disabled={busy}
-        onClick={() => onSave({ ...p, goals: p.goals.trim(), avoid: p.avoid.trim(), notes: p.notes.trim() })}>
-        Save and plan my week
-      </button>
+      {hasPlan ? (
+        <div className="save-row">
+          <button className="btn secondary" disabled={busy} onClick={() => onSave(clean(p), false)}>Save</button>
+          <button className="btn" disabled={busy} onClick={() => onSave(clean(p), true)}>Save and re-plan this week</button>
+        </div>
+      ) : (
+        <button className="btn" disabled={busy} onClick={() => onSave(clean(p), true)}>Save and plan my week</button>
+      )}
+      {hasPlan && <p className="hint center">“Save” keeps this week’s plan and uses your changes next time.</p>}
     </section>
   );
 }
@@ -236,10 +245,17 @@ function PlanView({ row, onCheck, onDone, onRedo }: {
   row: PlanRow; onCheck: (key: string, on: boolean) => void; onDone: () => void; onRedo: () => void;
 }) {
   const plan = row.plan;
-  const names = Object.fromEntries(plan.recipes.map((r) => [r.id, r.name]));
+  const keys = plan.grocery.flatMap((sec) => sec.items.map((it) => `${sec.section}|${it.name}`));
+  const inBasket = keys.filter((k) => row.checked[k]).length;
 
   return (
     <div>
+      <div className="glance">
+        <div><b>{plan.recipes.length}</b><span>{plan.recipes.length === 1 ? "Meal" : "Meals"}</span></div>
+        <div><b>{keys.length}</b><span>To buy</span></div>
+        <div><b>{plan.already_have.length}</b><span>At home</span></div>
+      </div>
+
       {plan.overview && (
         <div className="overview">
           <div className="eyebrow">This week’s thread</div>
@@ -252,34 +268,48 @@ function PlanView({ row, onCheck, onDone, onRedo }: {
         if (!list.length) return null;
         return (
           <div key={meal}>
-            <h2>{MEAL_TITLE[meal][0]} <em>{MEAL_TITLE[meal][1]}</em></h2>
-            {list.map((r) => (
-        <details className="recipe" key={r.id}>
-          <summary>
-            <div>
-              <h3>{r.name}</h3>
-              <div className="rmeta">{r.minutes} min{r.why ? ` · ${r.why}` : ""}</div>
+            <div className="meal-head">
+              <span className="meal-icon"><MealIcon meal={meal} /></span>
+              <h2>{MEAL_LABEL[meal]}</h2>
+              <span className="meal-count">{mealCount(meal, list.length)}</span>
             </div>
-            <svg className="chev" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
-              <path d="M7.5 4.5 13 10l-5.5 5.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </summary>
-          <div className="rbody">
-            <ul>
-              {r.ingredients.map((i, k) => (
-                <li key={k}>{i.amount} {i.item}{i.from_kitchen && <span className="lefttag">leftover</span>}</li>
-              ))}
-            </ul>
-            <ol>{r.steps.map((s, k) => <li key={k}>{s}</li>)}</ol>
-          </div>
-        </details>
+            {list.map((r) => (
+              <details className="recipe" key={r.id}>
+                <summary>
+                  <div>
+                    <h3>{r.name}</h3>
+                    {r.why && <div className="rmeta">{r.why}</div>}
+                    <div className="chips-row">
+                      <span className="tag">⏱ {r.minutes} min</span>
+                      {r.ingredients.length > 0 && <span className="tag">{r.ingredients.length} ingredients</span>}
+                      {r.ingredients.some((i) => i.from_kitchen) && <span className="tag warm">uses leftovers</span>}
+                    </div>
+                  </div>
+                  <svg className="chev" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+                    <path d="M7.5 4.5 13 10l-5.5 5.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </summary>
+                <div className="rbody">
+                  <div className="label">You’ll need</div>
+                  <ul>
+                    {r.ingredients.map((i, k) => (
+                      <li key={k}>{i.amount} {i.item}{i.from_kitchen && <span className="tag warm small">leftover</span>}</li>
+                    ))}
+                  </ul>
+                  <div className="label">Steps</div>
+                  <ol>{r.steps.map((st, k) => <li key={k}>{st}</li>)}</ol>
+                </div>
+              </details>
             ))}
           </div>
         );
       })}
 
       <h2>Grocery <em>list</em></h2>
-      <div className="legend"><span className="overlap"><i /><i /></span> dots show how many dinners use an item</div>
+      <div className="progress" role="status">
+        <div className="progress-row"><span>{inBasket} of {keys.length} in your basket</span><span className="muted-in">One shop</span></div>
+        <div className="bar"><i style={{ width: `${keys.length ? (inBasket / keys.length) * 100 : 0}%` }} /></div>
+      </div>
       {plan.grocery.map((sec) => (
         <div className="sec" key={sec.section}>
           <div className="section-name">{sec.section}</div>
@@ -290,14 +320,7 @@ function PlanView({ row, onCheck, onDone, onRedo }: {
             return (
               <label className={`item${done ? " done" : ""}`} key={key}>
                 <input type="checkbox" checked={done} onChange={(e) => onCheck(key, e.target.checked)} />
-                <span className="name">
-                  {it.name}
-                  {uses > 1 && (
-                    <span className="overlap" title={`Used in ${it.used_in.map((id) => names[id]).filter(Boolean).join(", ")}`}>
-                      {Array.from({ length: Math.min(uses, 5) }, (_, k) => <i key={k} />)}
-                    </span>
-                  )}
-                </span>
+                <span className="name">{it.name}{uses > 1 && <span className="uses"> · {uses} meals</span>}</span>
                 <span className="qty">{it.amount}</span>
               </label>
             );
@@ -307,9 +330,9 @@ function PlanView({ row, onCheck, onDone, onRedo }: {
 
       {plan.already_have.length > 0 && (
         <div className="sec">
-          <div className="section-name">Already in your kitchen</div>
+          <div className="section-name">Already at home</div>
           {plan.already_have.map((h) => (
-            <div className="item" key={h.name}><span className="name">{h.name}</span><span className="lefttag">use first</span></div>
+            <div className="item" key={h.name}><span className="name">{h.name}</span><span className="tag warm">use first</span></div>
           ))}
         </div>
       )}
@@ -317,6 +340,35 @@ function PlanView({ row, onCheck, onDone, onRedo }: {
       <button className="btn secondary" onClick={onDone}>Week’s done: log leftovers</button>
       <button className="small-link" onClick={onRedo}>Not feeling it? Re-plan this week</button>
     </div>
+  );
+}
+
+function mealCount(meal: Meal, n: number) {
+  if (meal === "dinner") return `${n} ${n === 1 ? "night" : "nights"}`;
+  if (meal === "snack") return `${n} ${n === 1 ? "idea" : "ideas"}`;
+  return `${n} on rotation`;
+}
+
+/** Small line icons: a rising sun, a bowl, a crescent moon, a fig. */
+function MealIcon({ meal }: { meal: Meal }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {meal === "breakfast" && <><circle cx="12" cy="14" r="4.5" /><path d="M3 19h18M12 4.5v2M5.2 7.7l1.4 1.4M18.8 7.7l-1.4 1.4" /></>}
+      {meal === "lunch" && <><path d="M3 11h18c0 5-4 8-9 8s-9-3-9-8z" /><path d="M8 7c0-1.5 1-1.5 1-3M12 7c0-1.5 1-1.5 1-3M16 7c0-1.5 1-1.5 1-3" /></>}
+      {meal === "dinner" && <path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5z" />}
+      {meal === "snack" && <><path d="M12 6c-4 2-6 6-5 10s5 5 7 3 3-6 1-10c-1-2-2-3-3-3z" /><path d="M12 6c0-1 .5-2 1.5-2.5" /></>}
+    </svg>
+  );
+}
+
+/** Bottom tab icons: an arch, a jar, sliders. */
+function TabIcon({ view }: { view: View }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {view === "plan" && <><path d="M5 21V10c0-4 3-7 7-8 4 1 7 4 7 8v11z" /><path d="M9 21v-6h6v6" /></>}
+      {view === "left" && <><rect x="6" y="7" width="12" height="14" rx="3" /><path d="M8 3h8v4H8zM9 13h6" /></>}
+      {view === "prefs" && <><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></>}
+    </svg>
   );
 }
 
