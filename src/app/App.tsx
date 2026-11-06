@@ -114,7 +114,7 @@ export default function App(props: {
               <div className="status" role="status">
                 <Lantern />
                 <h3>{busy === "next" ? "Planning around your leftovers…" : "Planning your week…"}</h3>
-                <p className="muted">Choosing dinners that share ingredients. This can take up to a minute.</p>
+                <p className="muted">Choosing meals that share ingredients, then checking the plan. This can take a minute or two.</p>
                 <button className="small-link" onClick={() => abortRef.current?.abort()}>Cancel</button>
               </div>
             )}
@@ -183,7 +183,7 @@ function PrefsView({ initial, onSave, busy, hasPlan }: {
       <input id="goals" type="text" maxLength={300} value={p.goals} onChange={(e) => set("goals", e.target.value)} placeholder="High protein, lots of vegetables" />
 
       <label className="field" htmlFor="avoid">Ingredients to avoid</label>
-      <div className="hint">Allergies, dislikes, or things you don’t eat</div>
+      <div className="hint">Allergies, dislikes, or things you don’t eat. Every plan is checked for these.</div>
       <input id="avoid" type="text" maxLength={300} value={p.avoid} onChange={(e) => set("avoid", e.target.value)} placeholder="Cilantro, seed oils" />
 
       <span className="field">Plan meals for</span>
@@ -336,6 +336,8 @@ function PlanView({ row, onCheck, onDone, onRedo }: {
           ))}
         </div>
       )}
+
+      <p className="ai-note">Recipes are created by AI and checked against your preferences. If you have a serious allergy, always double-check ingredients.</p>
 
       <button className="btn secondary" onClick={onDone}>Week’s done: log leftovers</button>
       <button className="small-link" onClick={onRedo}>Not feeling it? Re-plan this week</button>

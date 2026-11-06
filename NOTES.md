@@ -2,6 +2,14 @@
 
 A running log of decisions and problems solved. Useful for interviews: each entry is a "why did you…" answer.
 
+## 2026-11 · Recipe quality: better instructions + automatic checks
+
+- **Prompt rewritten like a cook would brief a cook:** proven, well-loved dishes (no strange inventions), proper seasoning and acid, precise steps with heat, time and doneness cues, safe temperatures for proteins, honest cook times, and hidden sources of avoided foods (fish sauce, butter).
+- **Every plan is checked in code before it is shown** (`src/lib/quality.ts`): foods to avoid anywhere (whole-word, singular/plural, so "peas" catches "pea" but not "peach"), the requested meals and dinner count, complete steps and ingredients, the time limit, and a grocery list that matches the recipes.
+- **Self-correcting:** if a check fails, the AI is asked again with a precise list of what to fix. A plan containing a food to avoid is never shown; small issues are tolerated rather than making the user wait. A time budget stops a second attempt if the first was slow.
+- **Honesty:** a short note says recipes are AI-made and checked, and to double-check for serious allergies.
+- **Tested** with hand-made good and broken plans, and a fake AI that fails first and succeeds on retry.
+
 ## 2026-11 · Contrast and scanning polish
 
 - **Cream "menu cards" on chocolate** for recipes, grocery sections and the week's summary: much higher contrast than brown-on-brown, and easier to read in a store. Every text color re-checked against WCAG AA.

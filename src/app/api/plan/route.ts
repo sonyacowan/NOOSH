@@ -6,7 +6,8 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { PreferencesSchema } from "@/lib/types";
-import { AiError, generateMealPlan } from "@/lib/ai";
+import { AiError } from "@/lib/ai";
+import { SafetyError, planWithChecks } from "@/lib/quality";
 import { SYSTEM_PROMPT, buildUserMessage } from "@/lib/prompt";
 
 export const maxDuration = 120; // seconds; planning usually takes 20-60s
@@ -51,9 +52,13 @@ export async function POST(request: Request) {
 
   let plan;
   try {
-    plan = await generateMealPlan(SYSTEM_PROMPT, buildUserMessage(prefs.data, have, recent), request.signal);
+    // Ask the AI, check the plan against quality and safety rules, and retry once with feedback if needed.
+    const result = await planWithChecks(SYSTEM_PROMPT, buildUserMessage(prefs.data, have, recent), prefs.data, request.signal);
+    plan = result.plan;
+    if (result.problems.length) console.warn("Saved a plan with minor issues", result.problems.map((p) => p.message));
   } catch (err) {
     if (err instanceof AiError) return fail(err.status, err.message);
+    if (err instanceof SafetyError) return fail(422, err.message);
     console.error("Plan generation failed", err);
     return fail(502, "Planning failed. Try again in a moment.");
   }

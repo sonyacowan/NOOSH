@@ -188,3 +188,6 @@ details[open] .chev{transform:rotate(90deg)}
 .hint.center{text-align:center;margin-top:10px}
 /* short confirmation message */
 .toast{background:var(--gold-soft);color:var(--gold-strong);border:1px solid var(--gold-line);border-radius:14px;padding:12px 14px;margin:0 0 14px;font-weight:600}
+
+/* honest note about AI-made recipes */
+.ai-note{font-size:.82rem;color:var(--muted);text-align:center;margin:22px auto 0;max-width:40ch;line-height:1.5}
