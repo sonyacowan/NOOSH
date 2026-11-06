@@ -60,3 +60,10 @@ body:has(.landing){background:#2A201D}
   .landing h1{animation-delay:.1s}.landing .sub{animation-delay:.2s}
   @keyframes rise{from{opacity:0;transform:translateY(10px)}}
 }
+
+/* "Continue with Google": white, as Google's guidelines suggest, so people recognise it instantly */
+.landing .google{display:flex;align-items:center;justify-content:center;gap:10px;font:inherit;font-weight:700;font-size:1rem;
+  background:#FFFFFF;color:#1F1F1F;border:0;border-radius:999px;padding:15px 20px;cursor:pointer}
+.landing .or{display:flex;align-items:center;gap:12px;color:var(--l-muted);font-size:.82rem;margin:6px 0 -6px}
+.landing .or::before,.landing .or::after{content:"";flex:1;height:1px;background:var(--l-line)}
+.landing .form.tight{margin-top:10px}
