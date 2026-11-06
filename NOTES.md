@@ -2,6 +2,13 @@
 
 A running log of decisions and problems solved. Useful for interviews: each entry is a "why did you…" answer.
 
+## 2026-11 · Contrast and scanning polish
+
+- **Cream "menu cards" on chocolate** for recipes, grocery sections and the week's summary: much higher contrast than brown-on-brown, and easier to read in a store. Every text color re-checked against WCAG AA.
+- **Made the week scannable:** an "at a glance" strip (meals / to buy / at home), icons and counts per meal, chips for cook time, ingredient count and leftovers, a grocery progress bar, bigger gold checkboxes, and icon tabs.
+- **The landing page's diamond trellis** now sits behind the app header and inside the summary arch, tying the two together.
+- **Save vs. Save and re-plan:** editing preferences used to always replace this week's plan (and its checkmarks). Now "Save" keeps the current plan and applies changes next time.
+
 ## 2026-11 · From "dinner planner" to "one shop a week"
 
 - **Product shift:** the real promise is not thinking about groceries more than once a week, so NOOSH now plans any mix of breakfast, lunch, dinner and snacks, all on one grocery list.
