@@ -310,6 +310,7 @@ function PlanView({ row, onCheck, onDone, onRedo }: {
         <div className="progress-row"><span>{inBasket} of {keys.length} in your basket</span><span className="muted-in">One shop</span></div>
         <div className="bar"><i style={{ width: `${keys.length ? (inBasket / keys.length) * 100 : 0}%` }} /></div>
       </div>
+      <ShareList row={row} />
       {plan.grocery.map((sec) => (
         <div className="sec" key={sec.section}>
           <div className="section-name">{sec.section}</div>
@@ -339,6 +340,52 @@ function PlanView({ row, onCheck, onDone, onRedo }: {
 
       <button className="btn secondary" onClick={onDone}>Week’s done: log leftovers</button>
       <button className="small-link" onClick={onRedo}>Not feeling it? Re-plan this week</button>
+    </div>
+  );
+}
+
+/** Turn the grocery list into plain text: only what's still to buy, grouped by aisle. */
+function groceryText(row: PlanRow) {
+  const left = (sec: PlanRow["plan"]["grocery"][number]) => sec.items.filter((it) => !row.checked[`${sec.section}|${it.name}`]);
+  const anyLeft = row.plan.grocery.some((sec) => left(sec).length);
+  const lines = [`NOOSH · Week ${row.week} grocery list`];
+  for (const sec of row.plan.grocery) {
+    const items = anyLeft ? left(sec) : sec.items;
+    if (!items.length) continue;
+    lines.push("", sec.section.toUpperCase(), ...items.map((it) => `☐ ${it.name}${it.amount ? ` (${it.amount})` : ""}`));
+  }
+  if (row.plan.already_have.length) lines.push("", `Already at home: ${row.plan.already_have.map((h) => h.name).join(", ")}`);
+  return lines.join("\n");
+}
+
+/** "Share list": the phone's share sheet where available, otherwise copy to the clipboard. */
+function ShareList({ row }: { row: PlanRow }) {
+  const [msg, setMsg] = useState("");
+  async function share() {
+    const text = groceryText(row);
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "NOOSH grocery list", text });
+        return;
+      }
+      await navigator.clipboard.writeText(text);
+      setMsg("Copied. Paste it into Notes, a text, or your grocery app.");
+    } catch (e) {
+      if ((e as Error).name === "AbortError") return; // they closed the share sheet
+      try { await navigator.clipboard.writeText(text); setMsg("Copied to your clipboard."); }
+      catch { setMsg("Couldn’t share from this browser. Try another browser or take a screenshot."); }
+    }
+    setTimeout(() => setMsg(""), 4000);
+  }
+  return (
+    <div className="share">
+      <button className="btn secondary share-btn" onClick={share}>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M12 15V3M8 7l4-4 4 4" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
+        </svg>
+        Share list
+      </button>
+      {msg && <div className="share-msg" role="status">{msg}</div>}
     </div>
   );
 }

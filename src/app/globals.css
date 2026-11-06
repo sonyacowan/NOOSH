@@ -188,3 +188,8 @@ details[open] .chev{transform:rotate(90deg)}
 .hint.center{text-align:center;margin-top:10px}
 /* short confirmation message */
 .toast{background:var(--gold-soft);color:var(--gold-strong);border:1px solid var(--gold-line);border-radius:14px;padding:12px 14px;margin:0 0 14px;font-weight:600}
+
+/* share the grocery list */
+.share{margin:10px 0 0}
+.share-btn{margin-top:0;padding:12px 20px}
+.share-msg{font-size:.85rem;color:var(--gold-strong);text-align:center;margin-top:8px}
