@@ -6,7 +6,7 @@ import Link from "next/link";
 export const metadata: Metadata = { title: "Privacy · NOOSH" };
 
 const UPDATED = "November 6, 2026";
-const CONTACT = "CONTACT_EMAIL";
+const CONTACT = "sonyajasminec@gmail.com";
 
 export default function Privacy() {
   return (
