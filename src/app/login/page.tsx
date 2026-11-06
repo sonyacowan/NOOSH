@@ -112,7 +112,7 @@ export default function LoginPage() {
           <h2 className="serif">Shop once. <em>Eat well all week.</em></h2>
           {form("email-bottom")}
         </div>
-        <div className="lfoot">NOOSH · made with care for your kitchen</div>
+        <div className="lfoot">NOOSH · made with care for your kitchen · <a href="/privacy">Privacy</a></div>
       </div>
     </main>
   );

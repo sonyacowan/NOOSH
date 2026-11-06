@@ -148,6 +148,7 @@ export default function App(props: {
           <span className="muted">Signed in as {props.email}</span>
           <form action="/auth/signout" method="post"><button className="small-link">Sign out</button></form>
           <button className="small-link" onClick={deleteEverything}>Delete my data</button>
+          <a className="small-link" href="/privacy">Privacy</a>
         </footer>
       </div>
 

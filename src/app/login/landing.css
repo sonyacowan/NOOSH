@@ -67,3 +67,5 @@ body:has(.landing){background:#2A201D}
 .landing .or{display:flex;align-items:center;gap:12px;color:var(--l-muted);font-size:.82rem;margin:6px 0 -6px}
 .landing .or::before,.landing .or::after{content:"";flex:1;height:1px;background:var(--l-line)}
 .landing .form.tight{margin-top:10px}
+
+.landing .lfoot a{color:var(--l-muted);text-underline-offset:3px}

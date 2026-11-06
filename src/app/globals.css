@@ -193,3 +193,13 @@ details[open] .chev{transform:rotate(90deg)}
 .share{margin:10px 0 0}
 .share-btn{margin-top:0;padding:12px 20px}
 .share-msg{font-size:.85rem;color:var(--gold-strong);text-align:center;margin-top:8px}
+
+/* plain reading pages, like Privacy */
+.prose{padding-bottom:60px;line-height:1.65}
+.prose h2{font-size:1.6rem;margin:30px 0 8px}
+.prose ul{padding-left:20px}.prose li{margin:8px 0}
+.prose a{color:var(--gold-strong);text-underline-offset:3px}
+.prose b{color:var(--ink)}
+.prose .mark-link{color:var(--ink);text-decoration:none}
+.prose .back{margin-top:34px}
+.prose .mark{font-family:var(--font-serif),Georgia,serif;font-size:1.35rem;letter-spacing:.34em}
