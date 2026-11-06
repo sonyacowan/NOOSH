@@ -379,6 +379,7 @@ function ShareList({ row }: { row: PlanRow }) {
   }
   return (
     <div className="share">
+      {INSTACART_ON && <InstacartButton />}
       <button className="btn secondary share-btn" onClick={share}>
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <path d="M12 15V3M8 7l4-4 4 4" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
@@ -387,6 +388,50 @@ function ShareList({ row }: { row: PlanRow }) {
       </button>
       {msg && <div className="share-msg" role="status">{msg}</div>}
     </div>
+  );
+}
+
+// The Instacart button only shows once Instacart is set up (NEXT_PUBLIC_INSTACART=on in Vercel).
+const INSTACART_ON = process.env.NEXT_PUBLIC_INSTACART === "on";
+
+/** Instacart's "Shop ingredients" button, built to their design rules (dark theme, 46px, 22px logo). */
+function InstacartButton() {
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState("");
+  async function open() {
+    setBusy(true); setMsg("");
+    // Open the tab right away (browsers block pop-ups that open after a delay), then send it to Instacart.
+    const tab = window.open("", "_blank");
+    try {
+      const res = await fetch("/api/instacart", { method: "POST" });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || !json.url) throw new Error(json.error || "Couldn’t open Instacart. Try again, or use Share list.");
+      if (tab) tab.location.href = json.url; else window.location.href = json.url;
+    } catch (e) {
+      tab?.close();
+      setMsg((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <>
+      <button className="instacart-btn" onClick={open} disabled={busy}>
+        <InstacartCarrot />
+        {busy ? "Opening Instacart…" : "Shop ingredients"}
+      </button>
+      {msg && <div className="share-msg" role="alert">{msg}</div>}
+    </>
+  );
+}
+
+/** Instacart's official full-color carrot logo, unmodified (from their logo pack). */
+function InstacartCarrot() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 42.3 52.9" aria-hidden="true">
+      <path fill="#0AAD0A" d="M36.4,8.6c-2.3,0-4,1-5.5,3.2l-4.4,6.4V0H15.9v18.2l-4.4-6.4C9.9,9.6,8.2,8.6,5.9,8.6C2.4,8.6,0,11.2,0,14.4c0,2.7,1.3,4.5,4,6.3l17.1,11l17.1-11c2.7-1.8,4-3.5,4-6.3C42.3,11.2,39.9,8.6,36.4,8.6z" />
+      <path fill="#FF7009" d="M21.1,34.4c10.2,0,18.5,7.6,18.5,18.5h-37C2.6,42,11,34.4,21.1,34.4z" />
+    </svg>
   );
 }
 

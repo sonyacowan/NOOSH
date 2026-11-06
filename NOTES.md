@@ -2,6 +2,16 @@
 
 A running log of decisions and problems solved. Useful for interviews: each entry is a "why did you…" answer.
 
+## 2026-11 · Instacart "Shop ingredients"
+
+- **Why Instacart:** Amazon/Whole Foods offer no public cart API; Instacart's Developer Platform turns a list into a shopping page across many grocers, and pays affiliate commission once approved.
+- **Built from the current docs**, not memory: `POST /idp/v1/products/products_link` returns a shareable link; dev and production servers differ; production keys require a reviewed demo.
+- **Server-side only:** the browser asks `/api/instacart`, which reads the user's saved plan (never trusting a list sent from the browser), sends only items still to buy, and keeps the API key secret.
+- **Units:** free-text amounts ("300 g bag", "1/2 cup", "6") are mapped to Instacart's supported units; unrecognised ones are sent by name only.
+- **Brand compliance:** official carrot logo, "Shop ingredients", dark theme #003D29 / #FAF1E5, 46px tall, 29.5px radius, 22px logo. No delivery claims or "partner" wording.
+- **Pop-up blockers:** the new tab opens immediately on tap, then navigates once the link arrives; it closes again on error.
+- **Feature flag:** the button only appears when `NEXT_PUBLIC_INSTACART=on`, so it can ship before approval without confusing testers.
+
 ## 2026-11 · Contrast and scanning polish
 
 - **Cream "menu cards" on chocolate** for recipes, grocery sections and the week's summary: much higher contrast than brown-on-brown, and easier to read in a store. Every text color re-checked against WCAG AA.
